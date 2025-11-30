@@ -12,6 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LaboratoriumComputer">
         <activity
+            android:name=".models.Equipment"
+            android:exported="false" />
+        <activity
+            android:name=".EquipmentActivity"
+            android:exported="false" />
+        <activity
             android:name=".HistoryActivity"
             android:exported="false" />
         <activity
