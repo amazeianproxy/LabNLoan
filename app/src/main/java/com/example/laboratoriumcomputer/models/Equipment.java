@@ -1,11 +1,16 @@
 package com.example.laboratoriumcomputer.models;
 
-public class Equipment {
+import java.io.Serializable;
+
+public class Equipment implements Serializable {
     private String serialNumber;
     private String name;
     private String type;
     private String lastBorrowed;
     private String status;
+
+    public Equipment() {
+    }
 
     public Equipment(String serialNumber, String name, String type, String lastBorrowed, String status) {
         this.serialNumber = serialNumber;
