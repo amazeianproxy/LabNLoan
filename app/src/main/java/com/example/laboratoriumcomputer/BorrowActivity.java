@@ -30,6 +30,8 @@ public class BorrowActivity extends AppCompatActivity {
         ImageButton menuButton = findViewById(R.id.menu_button);
         NavigationView navigationView = findViewById(R.id.navigation_view);
 
+        navigationView.setCheckedItem(R.id.menu_borrow);
+
         menuButton.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
 
         navigationView.setNavigationItemSelectedListener(item -> {
