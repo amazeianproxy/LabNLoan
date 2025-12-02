@@ -32,10 +32,16 @@ public class BorrowActivity extends AppCompatActivity {
 
         navigationView.setCheckedItem(R.id.menu_borrow);
 
-        menuButton.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
+        menuButton.setOnClickListener(v -> {
+            if (!drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.openDrawer(GravityCompat.START));
+            }
+        });
 
         navigationView.setNavigationItemSelectedListener(item -> {
+            Intent intent = null;
             int id = item.getItemId();
+            
             if (id == R.id.menu_dashboard) {
                 startActivity(new Intent(BorrowActivity.this, MainActivity.class));
             } else if (id == R.id.menu_inventory) {
