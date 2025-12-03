@@ -51,6 +51,13 @@ public class BorrowActivity extends AppCompatActivity {
             } else if (id == R.id.menu_history) {
                 startActivity(new Intent(BorrowActivity.this, HistoryActivity.class));
             }
+
+            if (intent != null) {
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+            }
+            
             drawerLayout.closeDrawer(GravityCompat.START);
             return true;
         });
