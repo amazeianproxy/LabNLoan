@@ -10,7 +10,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:padding="16dp">
 
         <ImageButton
             android:id="@+id/menu_button"
@@ -24,6 +25,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/txtTitle"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:text="LabNLoan"
@@ -36,6 +38,36 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <EditText
+            android:id="@+id/etStudentName"
+            android:layout_width="0dp" 
+            android:layout_height="wrap_content" 
+            android:hint="Student Name" 
+            app:layout_constraintTop_toBottomOf="@id/menu_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="32dp" />
+
+        <EditText
+            android:id="@+id/etSerialNumber"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Equipment Serial Number"
+            app:layout_constraintTop_toBottomOf="@id/etStudentName"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp" />
+
+        <Button 
+            android:id="@+id/btnBorrow"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Borrow Equipment"
+            app:layout_constraintTop_toBottomOf="@id/etSerialNumber"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="24dp" />
+        
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView
