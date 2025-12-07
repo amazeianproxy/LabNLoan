@@ -34,7 +34,7 @@ public class BorrowActivity extends AppCompatActivity {
 
         menuButton.setOnClickListener(v -> {
             if (!drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                drawerLayout.openDrawer(GravityCompat.START));
+                drawerLayout.openDrawer(GravityCompat.START);
             }
         });
 
@@ -71,7 +71,7 @@ public class BorrowActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START){
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)){
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();

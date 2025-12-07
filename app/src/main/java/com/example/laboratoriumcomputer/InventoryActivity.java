@@ -1,13 +1,9 @@
 package com.example.laboratoriumcomputer;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -18,14 +14,13 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.laboratoriumcomputer.adapters.EquipmentAdapter;
+import com.example.laboratoriumcomputer.databinding.ActivityInventoryBinding;
+import com.example.laboratoriumcomputer.databinding.DialogAddEquipmentBinding;
 import com.example.laboratoriumcomputer.managers.DatabaseManager;
 import com.example.laboratoriumcomputer.models.Equipment;
-import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -35,39 +30,39 @@ import java.util.List;
 
 public class InventoryActivity extends AppCompatActivity {
 
-    private RecyclerView rvEquipment;
+    private ActivityInventoryBinding binding;
     private EquipmentAdapter equipmentAdapter;
     private List<Equipment> equipmentList;
+    private List<Equipment> allEquipmentList;
     private DatabaseManager databaseManager;
+    private String currentStatusFilter = "All Status";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_inventory);
+        
+        binding = ActivityInventoryBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
-        ImageButton menuButton = findViewById(R.id.menu_button);
-        NavigationView navigationView = findViewById(R.id.navigation_view);
-
-        rvEquipment = findViewById(R.id.rvEquipment);
-        rvEquipment.setLayoutManager(new LinearLayoutManager(this));
+        binding.rvEquipment.setLayoutManager(new LinearLayoutManager(this));
         equipmentList = new ArrayList<>();
+        allEquipmentList = new ArrayList<>();
         equipmentAdapter = new EquipmentAdapter(equipmentList);
-        rvEquipment.setAdapter(equipmentAdapter);
+        binding.rvEquipment.setAdapter(equipmentAdapter);
 
         databaseManager = new DatabaseManager();
         databaseManager.getEquipmentList(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                equipmentList.clear();
+                allEquipmentList.clear();
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Equipment equipment = dataSnapshot.getValue(Equipment.class);
                     if (equipment != null) {
-                        equipmentList.add(equipment);
+                        allEquipmentList.add(equipment);
                     }
                 }
-                equipmentAdapter.notifyDataSetChanged();
+                applyFilters();
             }
 
             @Override
@@ -76,12 +71,15 @@ public class InventoryActivity extends AppCompatActivity {
             }
         });
 
-        ImageButton btnAddEquipment = findViewById(R.id.btnAddEquipment);
-        btnAddEquipment.setOnClickListener(v -> showAddEquipmentDialog());
+        binding.btnSearch.setOnClickListener(v -> applyFilters());
 
-        menuButton.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
+        binding.btnFilter.setOnClickListener(v -> showStatusPopup(v));
 
-        navigationView.setNavigationItemSelectedListener(item -> {
+        binding.btnAddEquipment.setOnClickListener(v -> showAddEquipmentDialog());
+
+        binding.menuButton.setOnClickListener(v -> binding.drawerLayout.openDrawer(GravityCompat.START));
+
+        binding.navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.menu_dashboard) {
                 startActivity(new Intent(InventoryActivity.this, MainActivity.class));
@@ -92,33 +90,59 @@ public class InventoryActivity extends AppCompatActivity {
             } else if (id == R.id.menu_history) {
                 startActivity(new Intent(InventoryActivity.this, HistoryActivity.class));
             }
-            drawerLayout.closeDrawer(GravityCompat.START);
+            binding.drawerLayout.closeDrawer(GravityCompat.START);
             return true;
         });
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main, (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
     }
 
+    private void showStatusPopup(View v) {
+        PopupMenu popup = new PopupMenu(this, v);
+        popup.getMenu().add("All Status");
+        popup.getMenu().add("Available");
+        popup.getMenu().add("Borrowed");
+        popup.getMenu().add("Damaged");
+        
+        popup.setOnMenuItemClickListener(item -> {
+            currentStatusFilter = item.getTitle().toString();
+            binding.btnFilter.setText(currentStatusFilter);
+            applyFilters();
+            return true;
+        });
+        popup.show();
+    }
+
+    private void applyFilters() {
+        String query = binding.etSearch.getText().toString().toLowerCase();
+        equipmentList.clear();
+        for (Equipment equipment : allEquipmentList) {
+            boolean matchesSearch = query.isEmpty() || equipment.getName().toLowerCase().contains(query);
+            boolean matchesStatus = currentStatusFilter.equals("All Status") || 
+                                    (equipment.getStatus() != null && equipment.getStatus().equalsIgnoreCase(currentStatusFilter));
+            
+            if (matchesSearch && matchesStatus) {
+                equipmentList.add(equipment);
+            }
+        }
+        equipmentAdapter.notifyDataSetChanged();
+    }
+
     private void showAddEquipmentDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_add_equipment, null);
-        builder.setView(dialogView);
-
-        EditText etSerialNumber = dialogView.findViewById(R.id.etSerialNumber);
-        EditText etName = dialogView.findViewById(R.id.etName);
-        EditText etType = dialogView.findViewById(R.id.etType);
-        EditText etStatus = dialogView.findViewById(R.id.etStatus);
+        
+        DialogAddEquipmentBinding dialogBinding = DialogAddEquipmentBinding.inflate(getLayoutInflater());
+        builder.setView(dialogBinding.getRoot());
 
         builder.setPositiveButton("Add", (dialog, which) -> {
-            String serialNumber = etSerialNumber.getText().toString().trim();
-            String name = etName.getText().toString().trim();
-            String type = etType.getText().toString().trim();
-            String status = etStatus.getText().toString().trim();
+            String serialNumber = dialogBinding.etSerialNumber.getText().toString().trim();
+            String name = dialogBinding.etName.getText().toString().trim();
+            String type = dialogBinding.etType.getText().toString().trim();
+            String status = dialogBinding.etStatus.getText().toString().trim();
 
             if (serialNumber.isEmpty() || name.isEmpty() || type.isEmpty() || status.isEmpty()) {
                 Toast.makeText(InventoryActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
