@@ -4,45 +4,39 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".BorrowActivity">
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp">
+        android:padding="20dp">
 
         <ImageButton
             android:id="@+id/menu_button"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_margin="16dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Menu"
             android:src="@drawable/hamburger_menu"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/txtTitle"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:text="LabNLoan"
-            android:fontFamily="monospace"
+            android:layout_height="wrap_content"
+            android:text="Borrow Equipment"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:gravity="center"
             app:layout_constraintTop_toTopOf="@+id/menu_button"
             app:layout_constraintBottom_toBottomOf="@+id/menu_button"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
         <EditText
-            android:id="@+id/etStudentName"
+            android:id="@+id/etBorrower"
             android:layout_width="0dp" 
             android:layout_height="wrap_content" 
-            android:hint="Student Name" 
+            android:hint="Borrower Name" 
             app:layout_constraintTop_toBottomOf="@id/menu_button"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -53,7 +47,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="Equipment Serial Number"
-            app:layout_constraintTop_toBottomOf="@id/etStudentName"
+            app:layout_constraintTop_toBottomOf="@id/etBorrower"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="16dp" />
