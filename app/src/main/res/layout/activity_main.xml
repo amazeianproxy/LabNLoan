@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,10 +18,16 @@
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
-            <ImageView
+            <ImageButton
+                android:id="@+id/menu_button"
                 android:layout_width="28dp"
                 android:layout_height="28dp"
-                android:src="@drawable/hamburger_menu" />
+                android:layout_margin="16dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Menu"
+                android:src="@drawable/hamburger_menu"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:layout_width="0dp"
@@ -30,7 +36,7 @@
                 android:text="LabNLoan"
                 android:textSize="22sp"
                 android:textStyle="bold"
-                android:gravity="center" />
+                android:layout_marginLeft="80dp" />
         </LinearLayout>
 
         <!-- Dashboard Title -->
@@ -364,4 +370,12 @@
         </LinearLayout>
 
     </LinearLayout>
-</ScrollView>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:menu="@menu/dashboard_menu" />
+
+</androidx.drawerlayout.widget.DrawerLayout>
