@@ -9,14 +9,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="16dp"
+        >
 
         <!-- Top Bar -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:layout_marginTop="18dp">
 
             <ImageButton
                 android:id="@+id/menu_button"
@@ -34,7 +36,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="LabNLoan"
-                android:textSize="22sp"
+                android:fontFamily="monospace"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 android:layout_marginLeft="80dp" />
         </LinearLayout>
@@ -44,17 +47,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Dashboard"
-            android:textSize="22sp"
+            android:fontFamily="sans-serif-black"
+            android:textSize="28sp"
             android:textStyle="bold"
-            android:gravity="center"
-            android:paddingTop="12dp" />
+            android:gravity="center" />
 
         <!-- FIRST ROW -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingTop="16dp">
+            android:paddingTop="16dp"
+            android:paddingHorizontal="5dp">
 
             <!-- Total Equipment -->
             <LinearLayout
@@ -132,7 +136,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingHorizontal="5dp">
 
             <!-- Borrowed -->
             <LinearLayout
@@ -212,6 +217,7 @@
             android:orientation="vertical"
             android:padding="16dp"
             android:layout_marginTop="8dp"
+            android:layout_marginHorizontal="5dp"
             android:background="@drawable/bg_white_card">
 
             <TextView
@@ -274,6 +280,7 @@
             android:padding="16dp"
             android:layout_marginTop="12dp"
             android:layout_marginBottom="32dp"
+            android:layout_marginHorizontal="5dp"
             android:background="@drawable/bg_white_card">
 
             <TextView
