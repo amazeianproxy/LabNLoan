@@ -40,18 +40,11 @@ public class BorrowActivity extends AppCompatActivity {
         ImageButton menuButton = findViewById(R.id.menu_button);
         NavigationView navigationView = findViewById(R.id.navigation_view);
 
-        navigationView.setCheckedItem(R.id.menu_borrow);
-
-        menuButton.setOnClickListener(v -> {
-            if (!drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                drawerLayout.openDrawer(GravityCompat.START);
-            }
-        });
+        menuButton.setOnClickListener(v -> 
+                drawerLayout.openDrawer(GravityCompat.START));
 
         navigationView.setNavigationItemSelectedListener(item -> {
-            Intent intent = null;
             int id = item.getItemId();
-            
             if (id == R.id.menu_dashboard) {
                 startActivity(new Intent(BorrowActivity.this, MainActivity.class));
             } else if (id == R.id.menu_inventory) {
@@ -61,16 +54,17 @@ public class BorrowActivity extends AppCompatActivity {
             } else if (id == R.id.menu_history) {
                 startActivity(new Intent(BorrowActivity.this, HistoryActivity.class));
             }
-
-            if (intent != null) {
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                finish();
-            }
-            
             drawerLayout.closeDrawer(GravityCompat.START);
             return true;
         });
+
+        etBorrower = findViewById(R.id.etBorrower);
+        etSerial = findViewById(R.id.etSerialNumber);
+        btnBorrow = findViewById(R.id.btnBorrow);
+
+        equipmentRef = FirebaseDatabase.getInstance().getReference("equipment");
+
+        btnBorrow.setOnClickListener(v -> borrowEquipment());
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -79,12 +73,45 @@ public class BorrowActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)){
-            drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+    private void borrowEquipment() {
+        String borrower = etBorrower.getText().toString().trim();
+        String serial = etSerial.getText().toString().trim();
+
+        if (borrower.isEmpty() || serial.isEmpty()) {
+            Toast.makeText(this, "All fields must be filled!", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        DatabaseReference selectedEquipment = equipmentRef.child(serial);
+
+        selectedEquipment.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                 if (!snapshot.exists()) {
+                     Toast.makeText(BorrowActivity.this, "Equipment not found!", Toast.LENGTH_SHORT).show();
+                     return;
+                 }
+
+                 String currentStatus = snapshot.child("status").getValue(String.class);
+
+                if ("Borrowed".equals(currentStatus)) {
+                    Toast.makeText(BorrowActivity.this, "This equipment is already borrowed!", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                selectedEquipment.child("status").setValue("Borrowed");
+                selectedEquipment.child("lastBorrowed").setValue(borrower);
+
+                Toast.makeText(BorrowActivity.this, "Borrow Success!", Toast.LENGTH_SHORT).show();
+
+                etBorrower.setText("");
+                etSerial.setText("");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(BorrowActivity.this, "Database Error!", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
