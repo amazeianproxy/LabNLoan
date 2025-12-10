@@ -30,7 +30,7 @@
         android:id="@+id/etType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Type (e.g. Monitor, PC)" />
+        android:hint="Type (Laptop, Camera, Webcam, Tablet)" />
 
     <EditText
         android:id="@+id/etStatus"

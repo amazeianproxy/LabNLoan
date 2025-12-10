@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InventoryActivity extends AppCompatActivity {
+    //Made by: Ian Mulya Chiuandi, 2702218891
 
     private ActivityInventoryBinding binding;
     private EquipmentAdapter equipmentAdapter;
