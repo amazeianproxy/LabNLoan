@@ -36,6 +36,49 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="70dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Return Equipment"
+                android:fontFamily="sans-serif-black"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@+id/app_title"
+                />
+
+            <EditText
+                android:id="@+id/etReturneeName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Returnee Name"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="32dp" />
+
+            <EditText
+                android:id="@+id/etSerialNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Equipment Serial Number"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="32dp" />
+
+            <Button
+                android:id="@+id/btnReturn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Return Equipment"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="24dp" />
+
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView
