@@ -17,8 +17,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.laboratoriumcomputer.adapters.HistoryAdapter; // Asumsikan Anda memiliki adapter ini
-import com.example.laboratoriumcomputer.models.History; // Asumsikan Anda memiliki model ini
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,8 +24,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import com.example.laboratoriumcomputer.adapters.HistoryAdapter;
+import com.example.laboratoriumcomputer.models.History;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale; // Digunakan untuk penyesuaian log data
 
 public class HistoryActivity extends AppCompatActivity {
 
@@ -46,17 +49,19 @@ public class HistoryActivity extends AppCompatActivity {
         ImageButton menuButton = findViewById(R.id.menu_button);
         NavigationView navigationView = findViewById(R.id.navigation_view);
 
-        // Inisialisasi RecyclerView
+        // 1. Inisialisasi RecyclerView
         rvHistory = findViewById(R.id.rvHistory);
         rvHistory.setLayoutManager(new LinearLayoutManager(this));
         historyList = new ArrayList<>();
         historyAdapter = new HistoryAdapter(historyList);
         rvHistory.setAdapter(historyAdapter);
 
-        // Inisialisasi Firebase Database Reference ke "history" table
+        // 2. Inisialisasi Firebase Database Reference ke "history" table
+        // Sesuai dengan struktur database yang Anda tunjukkan
         historyRef = FirebaseDatabase.getInstance().getReference("history");
         loadHistoryData();
 
+        // Navigasi
         menuButton.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
 
         navigationView.setNavigationItemSelectedListener(item -> {
@@ -87,25 +92,34 @@ public class HistoryActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 historyList.clear();
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    // Ambil data dan konversi ke objek History
-                    // Karena kita tidak memiliki model History, kita akan ambil manual
+                    
+                    // Ambil nilai dari child di bawah setiap KEY (misalnya: TST-01[15/12/2025-17:24])
                     String serialNumber = dataSnapshot.child("serialNumber").getValue(String.class);
                     String borrowerName = dataSnapshot.child("borrowerName").getValue(String.class);
                     String date = dataSnapshot.child("date").getValue(String.class);
+                    // Sesuaikan dengan nama field di database Anda: "borrowReturn"
+                    String borrowReturn = dataSnapshot.child("borrowReturn").getValue(String.class); 
                     String type = dataSnapshot.child("type").getValue(String.class);
 
-                    if (serialNumber != null && borrowerName != null && date != null && type != null) {
-                        History history = new History(serialNumber, borrowerName, date, type);
+                    if (serialNumber != null && borrowerName != null && date != null && borrowReturn != null && type != null) {
+                        History history = new History(serialNumber, borrowerName, date, borrowReturn, type);
                         historyList.add(history);
                     } else {
-                        Log.w("HistoryActivity", "Data riwayat tidak lengkap: " + dataSnapshot.getKey());
+                         Log.w("HistoryActivity", "Data riwayat tidak lengkap untuk key: " + dataSnapshot.getKey());
                     }
                 }
+                
+                // Urutkan riwayat berdasarkan Key (string key berisi tanggal), 
+                // atau jika Anda ingin yang terbaru di atas, balikkan daftarnya:
+                Collections.reverse(historyList);
+                
+                historyAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Toast.makeText(HistoryActivity.this, "Gagal memuat riwayat: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e("FirebaseError", "Database Error: " + error.getMessage());
             }
         });
     }
