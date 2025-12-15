@@ -2,19 +2,39 @@ package com.example.laboratoriumcomputer;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.laboratoriumcomputer.adapters.HistoryAdapter; // Asumsikan Anda memiliki adapter ini
+import com.example.laboratoriumcomputer.models.History; // Asumsikan Anda memiliki model ini
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HistoryActivity extends AppCompatActivity {
+
+    private RecyclerView rvHistory;
+    private HistoryAdapter historyAdapter;
+    private List<History> historyList;
+    private DatabaseReference historyRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +45,17 @@ public class HistoryActivity extends AppCompatActivity {
         DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
         ImageButton menuButton = findViewById(R.id.menu_button);
         NavigationView navigationView = findViewById(R.id.navigation_view);
+
+        // Inisialisasi RecyclerView
+        rvHistory = findViewById(R.id.rvHistory);
+        rvHistory.setLayoutManager(new LinearLayoutManager(this));
+        historyList = new ArrayList<>();
+        historyAdapter = new HistoryAdapter(historyList);
+        rvHistory.setAdapter(historyAdapter);
+
+        // Inisialisasi Firebase Database Reference ke "history" table
+        historyRef = FirebaseDatabase.getInstance().getReference("history");
+        loadHistoryData();
 
         menuButton.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
 
@@ -47,6 +78,35 @@ public class HistoryActivity extends AppCompatActivity {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
+        });
+    }
+
+    private void loadHistoryData() {
+        historyRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                historyList.clear();
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    // Ambil data dan konversi ke objek History
+                    // Karena kita tidak memiliki model History, kita akan ambil manual
+                    String serialNumber = dataSnapshot.child("serialNumber").getValue(String.class);
+                    String borrowerName = dataSnapshot.child("borrowerName").getValue(String.class);
+                    String date = dataSnapshot.child("date").getValue(String.class);
+                    String type = dataSnapshot.child("type").getValue(String.class);
+
+                    if (serialNumber != null && borrowerName != null && date != null && type != null) {
+                        History history = new History(serialNumber, borrowerName, date, type);
+                        historyList.add(history);
+                    } else {
+                        Log.w("HistoryActivity", "Data riwayat tidak lengkap: " + dataSnapshot.getKey());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(HistoryActivity.this, "Gagal memuat riwayat: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         });
     }
 }
