@@ -3,50 +3,42 @@ package com.example.laboratoriumcomputer.models;
 public class History {
     private String serialNumber;
     private String borrowerName;
-    private String date;
-    private String type; // e.g., "Borrow" or "Return"
+    private String date; // 15/12/2025, 17:24
+    private String borrowReturn; // Nilai: "Returned" atau "Borrowed"
+    private String type; // Tipe peralatan, e.g., "Laptop"
 
     // Constructor kosong wajib untuk Firebase
     public History() {
     }
 
-    public History(String serialNumber, String borrowerName, String date, String type) {
+    public History(String serialNumber, String borrowerName, String date, String borrowReturn, String type) {
         this.serialNumber = serialNumber;
         this.borrowerName = borrowerName;
         this.date = date;
+        this.borrowReturn = borrowReturn;
         this.type = type;
     }
 
-    // Getters and Setters
+    // Getters
     public String getSerialNumber() {
         return serialNumber;
-    }
-
-    public void setSerialNumber(String serialNumber) {
-        this.serialNumber = serialNumber;
     }
 
     public String getBorrowerName() {
         return borrowerName;
     }
 
-    public void setBorrowerName(String borrowerName) {
-        this.borrowerName = borrowerName;
-    }
-
     public String getDate() {
         return date;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public String getBorrowReturn() {
+        return borrowReturn;
     }
 
     public String getType() {
         return type;
     }
-
-    public void setType(String type) {
-        this.type = type;
-    }
+    
+    // Setters dihilangkan untuk model data yang sederhana.
 }
