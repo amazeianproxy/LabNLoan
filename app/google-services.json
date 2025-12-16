@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "379127174490",
+    "firebase_url": "https://laboratorium-computer-db-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "laboratorium-computer-db",
+    "storage_bucket": "laboratorium-computer-db.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:379127174490:android:638af531f3803ab5e7cf63",
+        "android_client_info": {
+          "package_name": "com.example.laboratoriumcomputer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBd3IiyZ1kCGXcP6ABOB4eJ9-TSPzQxnrI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
