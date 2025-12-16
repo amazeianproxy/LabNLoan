@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -16,6 +18,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.example.laboratoriumcomputer.models.History;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -23,11 +26,17 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class ReturnActivity extends AppCompatActivity {
 
     private EditText etReturneeName, etSerialNumber;
+    private RadioGroup rgCondition;
     private Button btnReturn;
     private DatabaseReference equipmentRef;
+    private DatabaseReference historyRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +67,12 @@ public class ReturnActivity extends AppCompatActivity {
 
         etReturneeName = findViewById(R.id.etReturneeName);
         etSerialNumber = findViewById(R.id.etSerialNumber);
+        rgCondition = findViewById(R.id.rgCondition);
         btnReturn = findViewById(R.id.btnReturn);
+        
         equipmentRef = FirebaseDatabase.getInstance().getReference("equipment");
+        historyRef = FirebaseDatabase.getInstance().getReference("history");
+        
         btnReturn.setOnClickListener(v -> returnEquipment());
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -89,17 +102,32 @@ public class ReturnActivity extends AppCompatActivity {
                 }
 
                 String currentStatus = snapshot.child("status").getValue(String.class);
+                String type = snapshot.child("type").getValue(String.class);
 
                 if (!"Borrowed".equalsIgnoreCase(currentStatus)) {
                     Toast.makeText(ReturnActivity.this, "This equipment is not currently borrowed!", Toast.LENGTH_LONG).show();
                     return;
                 }
 
-                selectedEquipment.child("status").setValue("Available");
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy, HH:mm", Locale.getDefault());
+                String currentDate = sdf.format(new Date());
+
+                String statusUpdate = "Available";
+                if (rgCondition.getCheckedRadioButtonId() == R.id.rbDamaged) {
+                    statusUpdate = "Damaged";
+                }
+
+                // Update Equipment status
+                selectedEquipment.child("status").setValue(statusUpdate);
+
+                // Add to History
+                History history = new History(serialNumber, returneeName, currentDate, "Returned", type != null ? type : "Unknown");
+                historyRef.push().setValue(history);
 
                 Toast.makeText(ReturnActivity.this, "Return Success!", Toast.LENGTH_SHORT).show();
                 etReturneeName.setText("");
                 etSerialNumber.setText("");
+                rgCondition.check(R.id.rbNormal);
             }
 
             @Override

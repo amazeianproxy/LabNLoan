@@ -24,6 +24,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/app_title"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:text="LabNLoan"
@@ -68,7 +69,32 @@
                 android:layout_height="wrap_content"
                 android:hint="Equipment Serial Number"
                 android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="32dp" />
+                android:layout_marginTop="16dp" />
+
+            <RadioGroup
+                android:id="@+id/rgCondition"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="16dp"
+                android:gravity="center">
+
+                <RadioButton
+                    android:id="@+id/rbNormal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Report as Available"
+                    android:checked="true"
+                    android:layout_marginEnd="16dp"/>
+
+                <RadioButton
+                    android:id="@+id/rbDamaged"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Report as Damaged" />
+
+            </RadioGroup>
 
             <Button
                 android:id="@+id/btnReturn"
