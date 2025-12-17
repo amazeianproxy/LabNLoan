@@ -7,6 +7,7 @@ import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +25,8 @@ import com.example.laboratoriumcomputer.models.Equipment;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +40,16 @@ public class InventoryActivity extends AppCompatActivity {
     private List<Equipment> allEquipmentList;
     private DatabaseManager databaseManager;
     private String currentStatusFilter = "All Status";
+
+    private final ActivityResultLauncher<ScanOptions> barcodeLauncher = registerForActivityResult(new ScanContract(),
+            result -> {
+                if (result.getContents() == null) {
+                    Toast.makeText(InventoryActivity.this, "Cancelled", Toast.LENGTH_LONG).show();
+                } else {
+                    binding.etSearch.setText(result.getContents());
+                    applyFilters();
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +86,17 @@ public class InventoryActivity extends AppCompatActivity {
         });
 
         binding.btnSearch.setOnClickListener(v -> applyFilters());
+
+        binding.btnScanQR.setOnClickListener(v -> {
+            ScanOptions options = new ScanOptions();
+            options.setDesiredBarcodeFormats(ScanOptions.QR_CODE);
+            options.setPrompt("Scan a QR Code");
+            options.setCameraId(0);
+            options.setBeepEnabled(false);
+            options.setBarcodeImageEnabled(true);
+            options.setOrientationLocked(false);
+            barcodeLauncher.launch(options);
+        });
 
         binding.btnFilter.setOnClickListener(v -> showStatusPopup(v));
 
