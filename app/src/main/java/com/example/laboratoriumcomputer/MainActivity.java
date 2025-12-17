@@ -1,26 +1,27 @@
 package com.example.laboratoriumcomputer;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.example.laboratoriumcomputer.databinding.ActivityMainBinding;
 import com.example.laboratoriumcomputer.managers.DatabaseManager;
+import com.example.laboratoriumcomputer.services.HistoryNotificationService;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
@@ -35,6 +36,15 @@ public class MainActivity extends AppCompatActivity {
 
     // Loan Status
     private TextView txtActiveLoans, txtOverdueLoans;
+
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    startService(new Intent(this, HistoryNotificationService.class));
+                } else {
+                    Toast.makeText(this, "Notification permission denied. History updates will not be shown.", Toast.LENGTH_LONG).show();
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         txtOverdueLoans = findViewById(R.id.txtOverdueLoans);
 
         loadDashboardData();
+        startHistoryNotificationService();
 
         NavigationView navigationView = findViewById(R.id.navigation_view);
 
@@ -85,6 +96,19 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
+    }
+
+    private void startHistoryNotificationService() {
+        Intent serviceIntent = new Intent(this, HistoryNotificationService.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                startService(serviceIntent);
+            } else {
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+            }
+        } else {
+            startService(serviceIntent);
+        }
     }
 
     private void loadDashboardData() {
