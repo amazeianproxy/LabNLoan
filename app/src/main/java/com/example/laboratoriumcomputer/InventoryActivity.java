@@ -3,6 +3,7 @@ package com.example.laboratoriumcomputer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
@@ -163,11 +164,15 @@ public class InventoryActivity extends AppCompatActivity {
         DialogAddEquipmentBinding dialogBinding = DialogAddEquipmentBinding.inflate(getLayoutInflater());
         builder.setView(dialogBinding.getRoot());
 
+        String[] statuses = {"Available", "Borrowed", "Damaged"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, statuses);
+        dialogBinding.actvStatus.setAdapter(adapter);
+
         builder.setPositiveButton("Add", (dialog, which) -> {
             String serialNumber = dialogBinding.etSerialNumber.getText().toString().trim();
             String name = dialogBinding.etName.getText().toString().trim();
             String type = dialogBinding.etType.getText().toString().trim();
-            String status = dialogBinding.etStatus.getText().toString().trim();
+            String status = dialogBinding.actvStatus.getText().toString().trim();
 
             if (serialNumber.isEmpty() || name.isEmpty() || type.isEmpty() || status.isEmpty()) {
                 Toast.makeText(InventoryActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();

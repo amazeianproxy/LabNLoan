@@ -122,7 +122,6 @@ public class BorrowActivity extends AppCompatActivity {
 
                 // Add to History
                 History history = new History(serial, borrower, currentDate, "Borrowed", type != null ? type : "Unknown");
-                // Using push() as keys cannot contain [ ] characters in Firebase Realtime Database
                 historyRef.push().setValue(history);
 
                 Toast.makeText(BorrowActivity.this, "Borrow Success!", Toast.LENGTH_SHORT).show();

@@ -32,10 +32,18 @@
         android:layout_height="wrap_content"
         android:hint="Type (Laptop, Camera, Webcam, Tablet)" />
 
-    <EditText
-        android:id="@+id/etStatus"
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Status (Available, Borrowed, Damaged)" />
+        android:hint="Status">
+
+        <AutoCompleteTextView
+            android:id="@+id/actvStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>
